@@ -167,7 +167,7 @@ $$
 h_1\\
 h_2
 \end{pmatrix}=
-\sigma\!\left(
+\sigma\left(
 \begin{pmatrix}
 w_{11} & w_{12}\\
 w_{21} & w_{22}
