@@ -108,238 +108,187 @@ $$
 \sigma(a)=\frac{1}{1+e^{-a}}.
 $$
 
-Its behavior can be summarized as follows:
+The sigmoid transforms any real number into a value between $0$ and $1$:
 
 $$
-a\ll0 \quad\Longrightarrow\quad \sigma(a)\approx0,
+\sigma(a)\in(0,1).
 $$
 
-$$
-a=0 \quad\Longrightarrow\quad \sigma(a)=0.5,
-$$
+For a hidden neuron, the quantity
 
 $$
-a\gg0 \quad\Longrightarrow\quad \sigma(a)\approx1.
+z=w_1x_1+w_2x_2+c
 $$
 
-Consider a generic hidden neuron
+determines the output
 
 $$
-h=\sigma(w_1x_1+w_2x_2+c).
+h=\sigma(z).
 $$
 
-Its threshold line
+The equation
 
 $$
-w_1x_1+w_2x_2+c=0
+z=0
 $$
 
-divides the plane into two half-planes. On the side where
+is the neuron's threshold line. On this line, $h=0.5$. On one side of the line, $z<0$ and therefore $h<0.5$; on the other side, $z>0$ and therefore $h>0.5$.
 
-$$
-w_1x_1+w_2x_2+c<0,
-$$
-
-the value of $h$ tends toward $0$. On the other side, where
-
-$$
-w_1x_1+w_2x_2+c>0,
-$$
-
-it tends toward $1$.
-
-The sigmoid therefore behaves like a **soft threshold**. Unlike a discontinuous step function, it changes smoothly and usually does not return exactly $0$ or $1$. Nevertheless, when its argument has a sufficiently large magnitude, its output becomes extremely close to one of these values.
+Thus, $h$ is a continuous measure of the side of the line on which the point lies. Far into one half-plane, $h$ is close to $0$; far into the other, it is close to $1$; near the line, it takes an intermediate value. For this reason, the sigmoid is called a **soft threshold**.
 
 ---
 
 ## 5. From lines to new coordinates
 
-Each hidden neuron measures the position of the input relative to its own threshold line. Together, the two neurons transform the original coordinates according to
+The hidden layer contains two neurons, so it associates two new numbers with every point $(x_1,x_2)$:
 
 $$
-(x_1,x_2)\longmapsto(h_1,h_2).
+h_1=\sigma(w_{11}x_1+w_{12}x_2+c_1),
 $$
 
-This is the key role of the hidden layer: it does not directly decide the final class. Instead, it constructs a new representation of the input.
+$$
+h_2=\sigma(w_{21}x_1+w_{22}x_2+c_2).
+$$
 
-Because the sigmoid is nonlinear, this transformation can rearrange the data in a way that no purely linear transformation could. The output neuron then performs a linear separation in the new $(h_1,h_2)$ space.
+These equations define a transformation
+
+$$
+T:\mathbb{R}^2\longrightarrow(0,1)^2,
+$$
+
+$$
+T(x_1,x_2)=(h_1,h_2).
+$$
+
+In matrix form,
+
+$$
+\begin{pmatrix}
+h_1\\
+h_2
+\end{pmatrix}
+=
+\sigma\!\left(
+\begin{pmatrix}
+w_{11} & w_{12}\\
+w_{21} & w_{22}
+\end{pmatrix}
+\begin{pmatrix}
+x_1\\
+x_2
+\end{pmatrix}
++
+\begin{pmatrix}
+c_1\\
+c_2
+\end{pmatrix}
+\right),
+$$
+
+where the sigmoid is applied separately to the two components.
+
+This formula describes a genuine change of representation:
+
+- in the input plane, a point is identified by its coordinates $(x_1,x_2)$;
+- in the hidden plane, the same point is represented by the coordinates $(h_1,h_2)$;
+- $h_1$ describes the point's position relative to the first threshold line;
+- $h_2$ describes its position relative to the second threshold line.
+
+The axes of the hidden plane therefore no longer represent the original variables $x_1$ and $x_2$. They represent the responses of the two hidden neurons.
 
 ---
 
-## 6. An intuitive geometric solution to XOR
+## 6. How the input plane is transformed
 
-To see how this works, consider the following two hidden neurons:
+The first threshold line divides the input plane according to the value of $h_1$, while the second divides it according to the value of $h_2$. Together, the two lines partition the input plane into regions.
 
-$$
-h_1=\sigma(10x_1+10x_2-5),
-$$
+Each region is sent to a different part of the hidden plane:
 
-$$
-h_2=\sigma(10x_1+10x_2-15).
-$$
+- points on the negative side of both lines have $h_1\approx0$ and $h_2\approx0$, so they are mapped near $(0,0)$;
+- points on the positive side of the first line but the negative side of the second have $h_1\approx1$ and $h_2\approx0$, so they are mapped near $(1,0)$;
+- points on the positive side of both lines have $h_1\approx1$ and $h_2\approx1$, so they are mapped near $(1,1)$.
 
-Their threshold lines are
+The transformation can therefore be summarized as
 
 $$
-10x_1+10x_2-5=0
-\quad\Longleftrightarrow\quad
+\begin{array}{c}
+\text{region of the }(x_1,x_2)\text{ plane}
+\\[2mm]
+\downarrow\;T
+\\[2mm]
+\text{position in the }(h_1,h_2)\text{ plane}.
+\end{array}
+$$
+
+The transformation does not physically move a point inside the original plane. Instead, it assigns the point a new pair of coordinates. Two points that are far apart in the input plane can acquire similar hidden coordinates, while points that were difficult to separate in the input plane can become separated in the hidden plane.
+
+<img src="xor_input_space.png" width="500" alt="XOR points and hidden-neuron threshold lines">
+
+---
+
+## 7. The transformation used for XOR
+
+For XOR, the two threshold lines can be placed at
+
+$$
 x_1+x_2=0.5
 $$
 
 and
 
 $$
-10x_1+10x_2-15=0
-\quad\Longleftrightarrow\quad
 x_1+x_2=1.5.
 $$
 
-These parallel lines divide the input plane into three regions:
+The first hidden coordinate indicates whether a point has crossed the first line, and the second indicates whether it has crossed the second. Consequently, the three regions are transformed as follows:
 
-- below the first line;
-- between the two lines;
-- above the second line.
+| Region in the $(x_1,x_2)$ plane | Hidden coordinates | XOR class |
+|:---|:---:|:---:|
+| $x_1+x_2<0.5$ | $(h_1,h_2)\approx(0,0)$ | $0$ |
+| $0.5<x_1+x_2<1.5$ | $(h_1,h_2)\approx(1,0)$ | $1$ |
+| $x_1+x_2>1.5$ | $(h_1,h_2)\approx(1,1)$ | $0$ |
 
-The XOR points with output $1$ lie in the middle region, whereas the points with output $0$ lie in the two outer regions.
+The two regions belonging to class $0$ are separated in the original plane by the region belonging to class $1$. After the transformation, however, the entire class-$1$ region is represented near $(1,0)$, away from the class-$0$ regions.
 
-This is only one convenient and geometrically transparent solution. During training, the network is free to discover other parameter configurations that produce the same classification.
-
----
-
-## 7. Computing the hidden coordinates
-
-We can now calculate the values of $h_1$ and $h_2$ for each XOR input.
-
-### Input $(0,0)$
-
-$$
-h_1=\sigma(-5)\approx0.0067,
-$$
-
-$$
-h_2=\sigma(-15)\approx0.
-$$
-
-Therefore,
-
-$$
-(0,0)\longmapsto(h_1,h_2)\approx(0,0).
-$$
-
-### Input $(0,1)$
-
-$$
-h_1=\sigma(5)\approx0.9933,
-$$
-
-$$
-h_2=\sigma(-5)\approx0.0067.
-$$
-
-Therefore,
-
-$$
-(0,1)\longmapsto(h_1,h_2)\approx(1,0).
-$$
-
-### Input $(1,0)$
-
-By symmetry,
-
-$$
-(1,0)\longmapsto(h_1,h_2)\approx(1,0).
-$$
-
-### Input $(1,1)$
-
-$$
-h_1=\sigma(15)\approx1,
-$$
-
-$$
-h_2=\sigma(5)\approx0.9933.
-$$
-
-Therefore,
-
-$$
-(1,1)\longmapsto(h_1,h_2)\approx(1,1).
-$$
-
-The complete transformation is approximately:
-
-| Input $(x_1,x_2)$ | $h_1$ | $h_2$ | Target $y$ |
-|:---:|:---:|:---:|:---:|
-| $(0,0)$ | $0.0067$ | $\approx0$ | $0$ |
-| $(0,1)$ | $0.9933$ | $0.0067$ | $1$ |
-| $(1,0)$ | $0.9933$ | $0.0067$ | $1$ |
-| $(1,1)$ | $\approx1$ | $0.9933$ | $0$ |
+The network may learn different threshold lines, but their purpose remains the same: to construct hidden coordinates that make the two classes easier to separate.
 
 ---
 
 ## 8. Interpreting $h_1$ and $h_2$
 
-The hidden values are not yet the final prediction. They encode which thresholds the input has crossed:
+The hidden values are not predictions. They are the new coordinates produced by the transformation $T$.
+
+The first coordinate $h_1$ contains information about the first threshold line; the second coordinate $h_2$ contains information about the second. The pair $(h_1,h_2)$ therefore summarizes the position of the original point relative to both learned boundaries.
+
+This is the essential difference between the two planes:
 
 $$
-(h_1,h_2)\approx(0,0)
+\underbrace{(x_1,x_2)}_{\text{original features}}
+\quad\xrightarrow{\;T\;}\quad
+\underbrace{(h_1,h_2)}_{\text{features learned by the network}}.
 $$
-
-means that the point lies below both thresholds;
-
-$$
-(h_1,h_2)\approx(1,0)
-$$
-
-means that it has crossed the first threshold but not the second;
-
-$$
-(h_1,h_2)\approx(1,1)
-$$
-
-means that it has crossed both thresholds.
-
-The hidden layer has thus replaced the original coordinates with two new features that describe the point's position relative to the learned boundaries.
 
 ---
 
 ## 9. Linear separation in the hidden space
 
-After the transformation, the four XOR inputs are arranged approximately as follows:
-
-$$
-(0,0)\longmapsto(0,0),
-$$
-
-$$
-(0,1)\longmapsto(1,0),
-$$
-
-$$
-(1,0)\longmapsto(1,0),
-$$
-
-$$
-(1,1)\longmapsto(1,1).
-$$
-
 <img src="xor_hidden_space.png" width="500" alt="XOR points in the hidden space">
 
-The two positive examples are now concentrated near $(1,0)$, while the negative examples lie near $(0,0)$ and $(1,1)$. In this transformed space, the classes are linearly separable.
+In the hidden plane, the class-$1$ points are concentrated near $(1,0)$, while the class-$0$ points lie near $(0,0)$ and $(1,1)$. The two classes, which were not linearly separable in the input plane, are now linearly separable.
 
-For example, the line
+The line
 
 $$
 h_1-h_2-0.5=0
 $$
 
-separates the positive point $(1,0)$ from the two negative points. The output neuron can therefore behave approximately as
+separates the class-$1$ region from the class-$0$ regions. The output neuron can therefore compute
 
 $$
 \hat y=\sigma\left(K(h_1-h_2-0.5)\right),
 $$
 
-where $K>0$ is sufficiently large.
+where $K>0$ is sufficiently large to make the final sigmoid behave almost like a binary classifier.
 
 The complete geometric mechanism is
 
