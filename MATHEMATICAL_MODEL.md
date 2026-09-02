@@ -210,13 +210,9 @@ Each region is sent to a different part of the hidden plane:
 The transformation can therefore be summarized as
 
 $$
-\begin{array}{c}
-\text{region of the }(x_1,x_2)\text{ plane}
-\\[2mm]
-\downarrow\;T
-\\[2mm]
-\text{position in the }(h_1,h_2)\text{ plane}.
-\end{array}
+(x_1,x_2)
+\xrightarrow{\ T\ }
+(h_1,h_2)
 $$
 
 The transformation does not physically move a point inside the original plane. Instead, it assigns the point a new pair of coordinates. Two points that are far apart in the input plane can acquire similar hidden coordinates, while points that were difficult to separate in the input plane can become separated in the hidden plane.
