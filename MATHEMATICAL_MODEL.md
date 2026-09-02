@@ -1,23 +1,15 @@
 # XOR from Scratch: The Mathematics of a 2 → 2 → 1 Neural Network
 
-This page develops, step by step, a small neural network capable of
-learning **XOR**.
+This page develops, step by step, a small neural network capable of learning the **XOR** function.
 
-The goal is not to rely on a machine-learning library, but to understand
-geometrically and mathematically what the following components actually
-do:
-
-- neurons, weights and biases;
-- the activation function (sigmoid);
-- the transformation from the $(x_1,x_2)$ plane to the $(h_1,h_2)$ plane;
-- the loss function;
-- gradient descent;
-- backpropagation.
+The goal is not to rely on a machine-learning library, but to understand what the network is doing both geometrically and mathematically. In particular, we will see how neurons, weights, biases, activation functions, loss minimization, gradient descent, and backpropagation work together.
 
 ---
+
 ## 1. The XOR problem
 
-We want to learn the XOR function:
+The XOR function is defined by the following table:
+
 | $x_1$ | $x_2$ | $y$ |
 |:---:|:---:|:---:|
 | 0 | 0 | 0 |
@@ -25,31 +17,29 @@ We want to learn the XOR function:
 | 1 | 0 | 1 |
 | 1 | 1 | 0 |
 
-In the $(x_1,x_2)$ plane, the two points with output $1$ lie on opposite
-corners of the square, while the two points with output $0$ lie on the
-other two corners.
+In the $(x_1,x_2)$ plane, the two points with output $1$ lie at opposite corners of the unit square. The same is true of the two points with output $0$.
 
-A single straight line cannot separate the two points with $y=1$ from
-the two points with $y=0$.
+Consequently, no single straight line can separate the two classes. A linear neuron is therefore not sufficient to solve XOR.
 
-Therefore, a single linear neuron is not sufficient.
+The purpose of the hidden layer will be to transform the original points into a new space in which the two classes *can* be separated by a line.
 
 ---
+
 ## 2. Network architecture
 
-We use a
+We use a neural network with architecture
 
 $$
-2 \longrightarrow 2 \longrightarrow 1
+2 \longrightarrow 2 \longrightarrow 1.
 $$
 
-neural network consisting of:
+It consists of:
 
-- two inputs: $(x_1,x_2)$;
-- two hidden neurons: $(h_1,h_2)$;
-- one output neuron: $\hat y$.
+- two inputs, $(x_1,x_2)$;
+- two hidden neurons, $(h_1,h_2)$;
+- one output neuron, $\hat y$.
 
-The hidden neurons are
+The hidden neurons compute
 
 $$
 h_1=\sigma(w_{11}x_1+w_{12}x_2+c_1),
@@ -59,127 +49,126 @@ $$
 h_2=\sigma(w_{21}x_1+w_{22}x_2+c_2),
 $$
 
-and the output neuron is
+while the output neuron computes
 
 $$
 \hat y=\sigma(v_1h_1+v_2h_2+c_3).
 $$
 
-The trainable parameters are therefore
+The complete vector of trainable parameters is
 
 $$
 \theta=
 (w_{11},w_{12},w_{21},w_{22},c_1,c_2,v_1,v_2,c_3).
 $$
 
-There are 9 trainable parameters in total.
+The network therefore has nine trainable parameters.
 
 ---
-## 3. What does a hidden neuron represent geometrically?
 
-Before applying the sigmoid, the first hidden neuron computes
+## 3. The geometric meaning of a hidden neuron
+
+Before applying the activation function, the first hidden neuron forms the linear combination
 
 $$
-w_{11}x_1+w_{12}x_2+c_1.
+z_1=w_{11}x_1+w_{12}x_2+c_1.
 $$
 
-Setting this quantity equal to zero gives
+The equation
+
+$$
+z_1=0,
+$$
+
+or equivalently
 
 $$
 w_{11}x_1+w_{12}x_2+c_1=0,
 $$
 
-which is a **straight line** in the
-
-$$
-(x_1,x_2)
-$$
-
-plane.
-
-Similarly, the second neuron defines
+defines a straight line in the $(x_1,x_2)$ plane. Similarly, the second hidden neuron defines the line
 
 $$
 w_{21}x_1+w_{22}x_2+c_2=0.
 $$
 
-We therefore have two lines.
+<img src="xor_input_space.png" width="500" alt="XOR points and hidden-neuron threshold lines">
 
-<img src="xor_input_space.png" width="500">
+The weights determine the orientation of each line, while the bias allows the line to move away from the origin. Without a bias, every threshold line would be forced to pass through the origin.
 
-The weights mainly determine the orientation of each line, while the
-bias allows the line to be translated. Without a bias, the line would be
-forced to pass through the origin.
-
-An important distinction is that $h_1$ and $h_2$ are **not themselves
-the lines**. The lines are the sets of points for which the arguments of
-the corresponding sigmoids are zero. The quantities $h_1$ and $h_2$ are
-the outputs produced after applying the activation function.
+It is important to distinguish the lines from the neuron outputs. The lines are the sets of points for which the arguments of the sigmoids are zero. The quantities $h_1$ and $h_2$, on the other hand, are the values obtained *after* the activation function has been applied.
 
 ---
+
 ## 4. The sigmoid activation function
 
-We use the sigmoid
+The activation function used here is the sigmoid
 
 $$
 \sigma(a)=\frac{1}{1+e^{-a}}.
 $$
 
-Its behavior is
+Its behavior can be summarized as follows:
 
 $$
-a\ll0 \quad\Rightarrow\quad
-\sigma(a)\approx0,
-$$
-
-$$
-a=0 \quad\Rightarrow\quad
-\sigma(a)=0.5,
+a\ll0 \quad\Longrightarrow\quad \sigma(a)\approx0,
 $$
 
 $$
-a\gg0 \quad\Rightarrow\quad
-\sigma(a)\approx1.
+a=0 \quad\Longrightarrow\quad \sigma(a)=0.5,
 $$
 
-Consider
+$$
+a\gg0 \quad\Longrightarrow\quad \sigma(a)\approx1.
+$$
+
+Consider a generic hidden neuron
 
 $$
 h=\sigma(w_1x_1+w_2x_2+c).
 $$
 
-The line
+Its threshold line
 
 $$
 w_1x_1+w_2x_2+c=0
 $$
 
-divides the plane into two half-planes.
-
-If
+divides the plane into two half-planes. On the side where
 
 $$
 w_1x_1+w_2x_2+c<0,
 $$
 
-the point lies on one side of the line and (h) tends toward (0).
-
-If
+the value of $h$ tends toward $0$. On the other side, where
 
 $$
 w_1x_1+w_2x_2+c>0,
 $$
 
-the point lies on the other side and (h) tends toward (1).
+it tends toward $1$.
 
-Thus, the sigmoid acts as a **soft threshold**. It does not usually
-return exactly 0 or 1, but it can return values extremely close to them.
+The sigmoid therefore behaves like a **soft threshold**. Unlike a discontinuous step function, it changes smoothly and usually does not return exactly $0$ or $1$. Nevertheless, when its argument has a sufficiently large magnitude, its output becomes extremely close to one of these values.
 
 ---
+
+## 5. From lines to new coordinates
+
+Each hidden neuron measures the position of the input relative to its own threshold line. Together, the two neurons transform the original coordinates according to
+
+$$
+(x_1,x_2)\longmapsto(h_1,h_2).
+$$
+
+This is the key role of the hidden layer: it does not directly decide the final class. Instead, it constructs a new representation of the input.
+
+Because the sigmoid is nonlinear, this transformation can rearrange the data in a way that no purely linear transformation could. The output neuron then performs a linear separation in the new $(h_1,h_2)$ space.
+
+---
+
 ## 6. An intuitive geometric solution to XOR
 
-To understand what the network can learn, consider the following two
-hidden neurons:
+To see how this works, consider the following two hidden neurons:
 
 $$
 h_1=\sigma(10x_1+10x_2-5),
@@ -192,45 +181,40 @@ $$
 Their threshold lines are
 
 $$
-10x_1+10x_2-5=0,
-$$
-
-or
-
-$$
-x_1+x_2=0.5,
+10x_1+10x_2-5=0
+\quad\Longleftrightarrow\quad
+x_1+x_2=0.5
 $$
 
 and
 
 $$
-10x_1+10x_2-15=0,
-$$
-
-or
-
-$$
+10x_1+10x_2-15=0
+\quad\Longleftrightarrow\quad
 x_1+x_2=1.5.
 $$
 
-These two parallel lines divide the XOR points into three regions.
+These parallel lines divide the input plane into three regions:
 
-The training process is free to find other equivalent parameter
-configurations; these particular lines are simply a convenient and
-geometrically transparent solution.
+- below the first line;
+- between the two lines;
+- above the second line.
+
+The XOR points with output $1$ lie in the middle region, whereas the points with output $0$ lie in the two outer regions.
+
+This is only one convenient and geometrically transparent solution. During training, the network is free to discover other parameter configurations that produce the same classification.
 
 ---
-## 7. Computing $h_1$ and $h_2$
+
+## 7. Computing the hidden coordinates
+
+We can now calculate the values of $h_1$ and $h_2$ for each XOR input.
 
 ### Input $(0,0)$
 
-For the first neuron,
-
 $$
-h_1=\sigma(-5)\approx0.0067.
+h_1=\sigma(-5)\approx0.0067,
 $$
-
-For the second,
 
 $$
 h_2=\sigma(-15)\approx0.
@@ -239,7 +223,7 @@ $$
 Therefore,
 
 $$
-(0,0)\longrightarrow$(h_1,h_2)$\approx(0,0).
+(0,0)\longmapsto(h_1,h_2)\approx(0,0).
 $$
 
 ### Input $(0,1)$
@@ -255,7 +239,7 @@ $$
 Therefore,
 
 $$
-(0,1)\longrightarrow$(h_1,h_2)$\approx(1,0).
+(0,1)\longmapsto(h_1,h_2)\approx(1,0).
 $$
 
 ### Input $(1,0)$
@@ -263,7 +247,7 @@ $$
 By symmetry,
 
 $$
-(1,0)\longrightarrow$(h_1,h_2)$\approx(1,0).
+(1,0)\longmapsto(h_1,h_2)\approx(1,0).
 $$
 
 ### Input $(1,1)$
@@ -279,227 +263,165 @@ $$
 Therefore,
 
 $$
-(1,1)\longrightarrow$(h_1,h_2)$\approx(1,1).
+(1,1)\longmapsto(h_1,h_2)\approx(1,1).
 $$
 
 The complete transformation is approximately:
 
 | Input $(x_1,x_2)$ | $h_1$ | $h_2$ | Target $y$ |
 |:---:|:---:|:---:|:---:|
-| $(0,0)$ | 0.0067 | ~0 | 0 |
-| $(0,1)$ | 0.9933 | 0.0067 | 1 |
-| $(1,0)$ | 0.9933 | 0.0067 | 1 |
-| $(1,1)$ | ~1 | 0.9933 | 0 |
-
-------------------- -------- -------- ------------
-  $(0,0)$               0.0067      ~0            0
-  $(0,1)$               0.9933   0.0067            1
-  $(1,0)$               0.9933   0.0067            1
-  $(1,1)$                  ~1   0.9933            0
+| $(0,0)$ | $0.0067$ | $\approx0$ | $0$ |
+| $(0,1)$ | $0.9933$ | $0.0067$ | $1$ |
+| $(1,0)$ | $0.9933$ | $0.0067$ | $1$ |
+| $(1,1)$ | $\approx1$ | $0.9933$ | $0$ |
 
 ---
-## 8. What do $h_1$ and $h_2$ tell us?
 
-The values $h_1$ and $h_2$ are **not yet the final prediction**.
+## 8. Interpreting $h_1$ and $h_2$
 
-They encode the position of the input point relative to the two
-threshold lines.
-
-Approximately,
+The hidden values are not yet the final prediction. They encode which thresholds the input has crossed:
 
 $$
 (h_1,h_2)\approx(0,0)
 $$
 
-means that the point is on the "0 side" of both thresholds;
+means that the point lies below both thresholds;
 
 $$
-$(h_1,h_2)$\approx(1,0)
+(h_1,h_2)\approx(1,0)
 $$
 
-means that the point has crossed the first threshold but not the second;
+means that it has crossed the first threshold but not the second;
 
 $$
-$(h_1,h_2)$\approx(1,1)
+(h_1,h_2)\approx(1,1)
 $$
 
-means that the point has crossed both thresholds.
+means that it has crossed both thresholds.
 
-The hidden layer therefore converts the original position of the point
-into **two new features**.
+The hidden layer has thus replaced the original coordinates with two new features that describe the point's position relative to the learned boundaries.
 
 ---
-## 9. The transformation into the $(h_1,h_2)$ plane
 
-After the hidden layer, we no longer need to think directly in terms of
-the original coordinates
+## 9. Linear separation in the hidden space
 
-$$
-(x_1,x_2)
-$$
-
-.
-
-Each input is transformed according to
+After the transformation, the four XOR inputs are arranged approximately as follows:
 
 $$
-(x_1,x_2)\longrightarrow(h_1,h_2).
-$$
-
-For our example,
-
-$$
-(0,0)\to(0,0),
+(0,0)\longmapsto(0,0),
 $$
 
 $$
-(0,1)\to(1,0),
+(0,1)\longmapsto(1,0),
 $$
 
 $$
-(1,0)\to(1,0),
+(1,0)\longmapsto(1,0),
 $$
 
 $$
-(1,1)\to(1,1),
+(1,1)\longmapsto(1,1).
 $$
 
-approximately.
+<img src="xor_hidden_space.png" width="500" alt="XOR points in the hidden space">
 
-<img src="xor_hidden_space.png" width="500">
+The two positive examples are now concentrated near $(1,0)$, while the negative examples lie near $(0,0)$ and $(1,1)$. In this transformed space, the classes are linearly separable.
 
-Now the two positive XOR examples are concentrated near
-
-$$
-(h_1,h_2)=(1,0),
-$$
-
-while the negative examples lie near
+For example, the line
 
 $$
-(0,0) \quad\text{and}\quad (1,1).
+h_1-h_2-0.5=0
 $$
 
-In this transformed space the classes are linearly separable.
-
-For example, one possible separating line is
+separates the positive point $(1,0)$ from the two negative points. The output neuron can therefore behave approximately as
 
 $$
-h_1-h_2-0.5=0.
+\hat y=\sigma\left(K(h_1-h_2-0.5)\right),
 $$
 
-Thus the output neuron could behave approximately as
+where $K>0$ is sufficiently large.
 
-$$
-\hat y=
-\sigma\left(K(h_1-h_2-0.5)\right),
-$$
-
-with a sufficiently large $K>0$.
-
-This is the central geometric idea:
+The complete geometric mechanism is
 
 $$
 \boxed{
 (x_1,x_2)
-\;\xrightarrow{\text{hidden layer + nonlinear activation}}\;
+\xrightarrow{\text{nonlinear hidden layer}}
 (h_1,h_2)
-\;\xrightarrow{\text{linear separation + sigmoid}}\;
+\xrightarrow{\text{linear separation and sigmoid}}
 \hat y
-}
+}.
 $$
 
-The hidden layer **transforms the space**.
-The output layer performs the final classification in that transformed
-space.
+The hidden layer transforms the space; the output layer classifies the transformed points.
 
 ---
+
 ## 10. The output neuron
 
-In general,
+In general, the output neuron computes
 
 $$
 \hat y=\sigma(v_1h_1+v_2h_2+c_3).
 $$
 
-The parameters $(v_1,v_2,c_3)$ are learned during training.
+It does not receive $(x_1,x_2)$ directly: it sees only the features $(h_1,h_2)$ constructed by the hidden layer.
 
-The output neuron does not directly see $(x_1,x_2)$. It receives only $(h_1,h_2)$.
+The two groups of parameters therefore have different roles:
 
-A useful interpretation is therefore:
+- $(w_{ij},c_1,c_2)$ determine how the original input space is transformed;
+- $(v_1,v_2,c_3)$ determine how the transformed points are classified.
 
-- $(w_{ij},c_1,c_2)$ learn **how to transform the original input
-    space**;
-- $(v_1,v_2,c_3)$ learn **how to classify the transformed points**.
+All these parameters are learned together during training.
 
 ---
+
 ## 11. The loss function
 
-The network needs a numerical measure of how far its prediction
-(\hat y) is from the correct value $y$.
-
-A simple choice is the **Mean Squared Error (MSE)**:
+To train the network, we need a numerical measure of the difference between the prediction $\hat y$ and the correct value $y$. A simple choice is the **mean squared error**:
 
 $$
-L(\theta) = \frac{1}{N} \sum_{i=1}^{N}
-(\hat y_i-y_i)^2.
+L(\theta)=\frac{1}{N}\sum_{i=1}^{N}(\hat y_i-y_i)^2.
 $$
 
-For XOR there are four training examples:
+For the four XOR examples, this becomes
 
 $$
-L(\theta)=\frac14 \left[
-\hat y(0,0;\theta)^2
-+
-(\hat y(0,1;\theta)-1)^2
-+
-(\hat y(1,0;\theta)-1)^2
-+
-\hat y(1,1;\theta)^2
-\right].
+\begin{aligned}
+L(\theta)=\frac14\big[&\hat y(0,0;\theta)^2
++(\hat y(0,1;\theta)-1)^2\\
+&+(\hat y(1,0;\theta)-1)^2
++\hat y(1,1;\theta)^2\big].
+\end{aligned}
 $$
 
-The training problem is
+Training is therefore the optimization problem
 
 $$
-\theta^\star =
-\arg\min_\theta L(\theta).
+\theta^\star=\arg\min_\theta L(\theta).
 $$
 
-The network is **not explicitly told**:
-
-> Put the first line at (x_1+x_2=0.5) and the second line at
-> (x_1+x_2=1.5).
-
-Instead, it receives examples and adjusts its parameters so as to reduce
-the loss.
+The network is not explicitly instructed to place its threshold lines at $x_1+x_2=0.5$ and $x_1+x_2=1.5$. It receives only the examples and their correct outputs. The positions of the lines emerge from the adjustment of the parameters required to reduce the loss.
 
 ---
+
 ## 12. Gradient descent
 
-To minimize the loss, each parameter is updated in the direction
-opposite to the gradient:
+Gradient descent reduces the loss by updating every parameter in the direction opposite to its derivative:
 
 $$
-p \leftarrow
-p-\eta\frac{\partial L}{\partial p},
+p\leftarrow p-\eta\frac{\partial L}{\partial p},
 $$
 
-where:
+where $p$ denotes any weight or bias and $\eta>0$ is the learning rate.
 
-- \(p\) is any weight or bias;
-- (\eta) is the learning rate;
-- (\frac{\partial L}{\partial p}) tells us how the loss
-    changes when $p$ changes.
-
-For all parameters simultaneously,
+Writing all parameters together gives
 
 $$
-\theta_{k+1} =
-\theta_k-\eta\nabla L(\theta_k).
+\theta_{k+1}=\theta_k-\eta\nabla L(\theta_k).
 $$
 
-During training, both the hidden-layer parameters
+During training, this rule adjusts both the hidden-layer parameters
 
 $$
 w_{11},w_{12},w_{21},w_{22},c_1,c_2
@@ -508,322 +430,353 @@ $$
 and the output-layer parameters
 
 $$
-v_1,v_2,c_3
+v_1,v_2,c_3.
 $$
 
-are adjusted.
-
-Geometrically, changing the hidden weights and biases changes the
-position and orientation of the hidden threshold lines.
+Geometrically, updates to the hidden weights and biases rotate and translate the threshold lines. At the same time, updates to the output layer change the separating boundary in the hidden space.
 
 ---
+
 ## 13. Backpropagation
 
-For clarity, consider the loss for a single training example:
+To understand how the required derivatives are computed, consider one training example and define
 
 $$
 L=\frac12(\hat y-y)^2.
+$$
+
+Introduce the pre-activation values
+
+$$
+z_1=w_{11}x_1+w_{12}x_2+c_1,
+$$
+
+$$
+z_2=w_{21}x_1+w_{22}x_2+c_2,
+$$
+
+$$
+z_3=v_1h_1+v_2h_2+c_3.
+$$
+
+Then
+
+$$
+h_1=\sigma(z_1),\qquad
+h_2=\sigma(z_2),\qquad
+\hat y=\sigma(z_3).
 $$
 
 The derivative of the sigmoid is
 
 $$
-\sigma'(a) = \sigma(a)(1-\sigma(a)).
+\sigma'(a)=\sigma(a)(1-\sigma(a)).
 $$
 
-Because the output of the final sigmoid is (\hat y), its
-derivative contributes
+We begin at the output. By the chain rule,
 
 $$
-\hat y(1-\hat y).
+\delta_3
+=\frac{\partial L}{\partial z_3}
+=(\hat y-y)\hat y(1-\hat y).
 $$
 
-### Gradients of the output layer
+### Output-layer gradients
+
+Since $z_3=v_1h_1+v_2h_2+c_3$,
 
 $$
-\frac{\partial L}{\partial v_1} =
-(\hat y-y)\hat y(1-\hat y)h_1,
-$$
-
-$$
-\frac{\partial L}{\partial v_2} =
-(\hat y-y)\hat y(1-\hat y)h_2,
+\frac{\partial L}{\partial v_1}=\delta_3h_1,
 $$
 
 $$
-\frac{\partial L}{\partial c_3} =
-(\hat y-y)\hat y(1-\hat y).
-$$
-
-### Gradients of the first hidden neuron
-
-$$
-\frac{\partial L}{\partial w_{11}} =
-(\hat y-y)\hat y(1-\hat y) v_1h_1(1-h_1)x_1,
+\frac{\partial L}{\partial v_2}=\delta_3h_2,
 $$
 
 $$
-\frac{\partial L}{\partial w_{12}} =
-(\hat y-y)\hat y(1-\hat y) v_1h_1(1-h_1)x_2,
+\frac{\partial L}{\partial c_3}=\delta_3.
+$$
+
+### First hidden neuron
+
+The output error reaches the first hidden neuron through the weight $v_1$:
+
+$$
+\delta_1
+=\frac{\partial L}{\partial z_1}
+=\delta_3v_1h_1(1-h_1).
+$$
+
+Therefore,
+
+$$
+\frac{\partial L}{\partial w_{11}}=\delta_1x_1,
 $$
 
 $$
-\frac{\partial L}{\partial c_1} =
-(\hat y-y)\hat y(1-\hat y) v_1h_1(1-h_1).
-$$
-
-### Gradients of the second hidden neuron
-
-$$
-\frac{\partial L}{\partial w_{21}} =
-(\hat y-y)\hat y(1-\hat y) v_2h_2(1-h_2)x_1,
+\frac{\partial L}{\partial w_{12}}=\delta_1x_2,
 $$
 
 $$
-\frac{\partial L}{\partial w_{22}} =
-(\hat y-y)\hat y(1-\hat y) v_2h_2(1-h_2)x_2,
+\frac{\partial L}{\partial c_1}=\delta_1.
+$$
+
+### Second hidden neuron
+
+Similarly,
+
+$$
+\delta_2
+=\frac{\partial L}{\partial z_2}
+=\delta_3v_2h_2(1-h_2),
+$$
+
+and hence
+
+$$
+\frac{\partial L}{\partial w_{21}}=\delta_2x_1,
 $$
 
 $$
-\frac{\partial L}{\partial c_2} =
-(\hat y-y)\hat y(1-\hat y) v_2h_2(1-h_2).
+\frac{\partial L}{\partial w_{22}}=\delta_2x_2,
 $$
 
-Backpropagation is an efficient application of the **chain rule**: it
-starts from the final error and propagates its effect backward through
-the network.
+$$
+\frac{\partial L}{\partial c_2}=\delta_2.
+$$
+
+Backpropagation is therefore an efficient, organized application of the chain rule. It starts from the final prediction error and propagates its influence backward through the output layer and then through the hidden layer.
 
 ---
-## 14. Why do (h(1-h)) and (\hat y(1-\hat y)) appear?
 
-Because
+## 14. Why do the factors $h(1-h)$ and $\hat y(1-\hat y)$ appear?
+
+They come directly from the derivative of the sigmoid:
 
 $$
 \sigma'(a)=\sigma(a)(1-\sigma(a)).
 $$
 
-If a hidden neuron produces $h_1$, the derivative of its sigmoid is
-therefore
+If a hidden neuron outputs $h$, the derivative of its activation is $h(1-h)$. Likewise, because the output neuron returns $\hat y$, its activation derivative is $\hat y(1-\hat y)$.
 
-$$
-h_1(1-h_1).
-$$
-
-Similarly, if the output neuron produces (\hat y), its sigmoid
-derivative is
-
-$$
-\hat y(1-\hat y).
-$$
-
-These factors describe how sensitive the output of each neuron is to a
-small change in its input.
+These factors measure how sensitive a neuron's output is to a small change in its input. A sigmoid is most sensitive near $0.5$ and becomes less sensitive as its output approaches $0$ or $1$.
 
 ---
+
 ## 15. Example of a complete parameter update
 
-For example,
+Combining the derivatives above, the update of $w_{11}$ is
 
 $$
-w_{11} \leftarrow w_{11} - \eta (\hat y-y)
-\hat y(1-\hat y) v_1 h_1(1-h_1) x_1.
+w_{11}\leftarrow w_{11}
+-\eta(\hat y-y)\hat y(1-\hat y)
+v_1h_1(1-h_1)x_1.
 $$
 
-This single equation contains the entire chain of dependencies:
+This single expression contains the entire chain of dependencies:
 
 $$
-\text{final error} \rightarrow
-\text{output sigmoid} \rightarrow v_1
-\rightarrow \text{hidden sigmoid} \rightarrow
+\text{prediction error}
+\longrightarrow
+\text{output sigmoid}
+\longrightarrow
+v_1
+\longrightarrow
+\text{hidden sigmoid}
+\longrightarrow
 x_1.
 $$
 
-This is why the procedure is called **backpropagation**: information
-about the final error is propagated backward through the network.
+The influence of the error is followed backward through the same sequence of operations used during the forward pass. This is precisely why the method is called **backpropagation**.
 
 ---
-## 16. Training and inference are different
+
+## 16. Training and inference
+
+Training and inference use the same forward computation, but only training modifies the parameters.
 
 ### Training
 
-During training:
+For each example, the network:
 
-1. choose an input
-$$
-(x_1,x_2)
-$$
-;
-2. compute $(h_1,h_2)$;
-3. compute (\hat y);
-4. compare (\hat y) with $y$;
-5. compute the loss;
-6. compute the gradients;
-7. update weights and biases.
+1. receives the input $(x_1,x_2)$;
+2. computes the hidden values $(h_1,h_2)$;
+3. computes the prediction $\hat y$;
+4. compares $\hat y$ with the target $y$;
+5. evaluates the loss;
+6. computes the gradients by backpropagation;
+7. updates the weights and biases.
 
-This process is repeated many times.
+These steps are repeated many times until the loss becomes sufficiently small.
 
 ### Inference
 
-After training, the parameters remain fixed.
+After training, the parameters remain fixed. For a new input, the network performs only the forward pass
 
-For a new input, we only compute
 $$
-$(x_1,x_2)$ \longrightarrow $(h_1,h_2)$ \longrightarrow
-\hat y.
+(x_1,x_2)\longrightarrow(h_1,h_2)\longrightarrow\hat y.
 $$
-No loss minimization and no weight update are performed during
-inference.
+
+No target value, loss calculation, backpropagation, or parameter update is required.
 
 ---
-## 17. Weights do not belong to individual data points
 
-A common misconception is that each training point has its own set of
-weights.
+## 17. The parameters are shared by all examples
 
-It does not.
+A common misconception is that every training point has its own weights. In fact, the network has one global parameter vector $\theta$, shared by the entire dataset.
 
-There is one global parameter vector
-$$
-\theta=(w,c,v,\ldots)
-$$
-shared by all training examples.
+With stochastic gradient descent, for example, the first training example may produce the update
 
-With stochastic gradient descent, schematically,
 $$
-\theta^{(1)} = \theta^{(0)}
--\eta\nabla L_1,
+\theta^{(1)}=\theta^{(0)}-\eta\nabla L_1,
 $$
-then
-$$
-\theta^{(2)} = \theta^{(1)}
--\eta\nabla L_2,
-$$
-and so on.
 
-Every training example modifies the **same** network parameters.
+and the next example then produces
+
+$$
+\theta^{(2)}=\theta^{(1)}-\eta\nabla L_2.
+$$
+
+Every example therefore modifies the same network. Over time, the parameters must find a configuration that works well for the dataset as a whole.
 
 ---
-## 18. What is the network actually learning?
 
-In our interpretable example, the hidden layer behaves approximately as
+## 18. What the network learns in this example
+
+In our interpretable solution, the two hidden neurons behave approximately as
+
 $$
 h_1\approx
 \begin{cases}
-0, & x_1+x_2<0.5,\
+0, & x_1+x_2<0.5,\\
 1, & x_1+x_2>0.5,
 \end{cases}
 $$
+
 and
+
 $$
 h_2\approx
 \begin{cases}
-0, & x_1+x_2<1.5,\
+0, & x_1+x_2<1.5,\\
 1, & x_1+x_2>1.5.
 \end{cases}
 $$
-Therefore:
 
-- below the first threshold: ($(h_1,h_2)$\approx(0,0));
-- between the thresholds: ($(h_1,h_2)$\approx(1,0));
-- above both thresholds: ($(h_1,h_2)$\approx(1,1)).
+Consequently,
 
-For XOR, the desired outputs in these three regions are
+- below the first threshold, $(h_1,h_2)\approx(0,0)$;
+- between the thresholds, $(h_1,h_2)\approx(1,0)$;
+- above both thresholds, $(h_1,h_2)\approx(1,1)$.
+
+For XOR, the desired outputs in these three regions are respectively
+
 $$
 0,\qquad1,\qquad0.
 $$
-The output neuron learns to produce a high value for the middle region
-and a low value for the other two.
+
+The output neuron learns to return a high value in the middle region and a low value in the two outer regions.
 
 ---
-## 19. The central conceptual point
 
-The two hidden lines are **not directly the output of the network**.
+## 19. The central idea
 
-Their purpose is to construct two new quantities,
-$$
-h_1,\qquad h_2.
-$$
-The sigmoid converts the position relative to each threshold into a
-soft, almost binary value.
+The two hidden lines are not themselves the output of the network. Their purpose is to create the new quantities $h_1$ and $h_2$.
 
-Thus,
+The sigmoid converts the position of an input relative to each threshold into a soft, almost binary value:
+
 $$
 \boxed{
-\text{lines in the }$(x_1,x_2)$\text{ plane}
+\text{threshold lines in the }(x_1,x_2)\text{ plane}
 \longrightarrow
-$(h_1,h_2)$
-}
+(h_1,h_2)
+}.
 $$
-and then
+
+The output neuron then separates the classes in this new space:
+
 $$
 \boxed{
-$(h_1,h_2)$
+(h_1,h_2)
 \longrightarrow
-\text{linear boundary in the new space}
+\text{linear boundary in the hidden space}
 \longrightarrow
 \hat y
-}
+}.
 $$
-The nonlinear transformation
+
+It is the nonlinear transformation
+
 $$
-$(x_1,x_2)$\mapsto$(h_1,h_2)$
+(x_1,x_2)\longmapsto(h_1,h_2)
 $$
-is what makes XOR linearly separable in the hidden representation.
+
+that makes XOR linearly separable.
 
 ---
+
 ## 20. Complete mathematical summary
 
 ### Forward propagation
+
 $$
-h_1=\sigma(w_{11}x_1+w_{12}x_2+c_1),
+z_1=w_{11}x_1+w_{12}x_2+c_1,
+\qquad
+h_1=\sigma(z_1),
 $$
+
 $$
-h_2=\sigma(w_{21}x_1+w_{22}x_2+c_2),
+z_2=w_{21}x_1+w_{22}x_2+c_2,
+\qquad
+h_2=\sigma(z_2),
 $$
+
 $$
-\hat y=\sigma(v_1h_1+v_2h_2+c_3).
+z_3=v_1h_1+v_2h_2+c_3,
+\qquad
+\hat y=\sigma(z_3).
 $$
+
 ### Loss
 
 For one example,
+
 $$
 L=\frac12(\hat y-y)^2.
 $$
+
 For the complete dataset,
+
 $$
-L= \frac{1}{N} \sum_i(\hat y_i-y_i)^2.
+L(\theta)=\frac1N\sum_{i=1}^{N}(\hat y_i-y_i)^2.
 $$
+
 ### Optimization problem
+
 $$
-\theta^\star =
-\arg\min_\theta L(\theta).
+\theta^\star=\arg\min_\theta L(\theta).
 $$
+
 ### Backpropagation
 
 Compute
+
 $$
 \frac{\partial L}{\partial p}
 $$
-for every parameter $p$.
+
+for every parameter $p$ by applying the chain rule from the output layer back to the hidden layer.
 
 ### Gradient-descent update
+
 $$
-p \leftarrow
-p-\eta\frac{\partial L}{\partial p}.
+p\leftarrow p-\eta\frac{\partial L}{\partial p}.
 $$
-Repeating this process allows the network to discover weights and biases
-that transform the original data into a representation in which
-classification becomes simple.
+
+Repeating this process allows the network to discover weights and biases that transform the original data into a representation in which classification becomes simple.
 
 ---
+
 ## 21. The whole idea in one sentence
 
-> A neural network does not solve XOR merely by drawing two lines: its
-> hidden neurons use nonlinear activation functions to transform the
-> position of each input relative to those lines into new coordinates
->
-$$
-(h_1,h_2)
-$$
-, and in this transformed space the output neuron can
-> linearly separate the two classes.
+> A neural network solves XOR by using nonlinear hidden neurons to transform each input from $(x_1,x_2)$ into new coordinates $(h_1,h_2)$, where a single output neuron can linearly separate the two classes.
