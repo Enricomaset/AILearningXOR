@@ -217,8 +217,6 @@ $$
 
 The transformation does not physically move a point inside the original plane. Instead, it assigns the point a new pair of coordinates. Two points that are far apart in the input plane can acquire similar hidden coordinates, while points that were difficult to separate in the input plane can become separated in the hidden plane.
 
-<img src="xor_input_space.png" width="500" alt="XOR points and hidden-neuron threshold lines">
-
 ---
 
 ## 7. The transformation used for XOR
