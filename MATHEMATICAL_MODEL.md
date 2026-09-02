@@ -153,7 +153,7 @@ $$
 These equations define a transformation
 
 $$
-T:\mathbb{R}^2\longrightarrow(0,1)^2,
+T:\mathbb{ℝ}^2\longrightarrow(0,1)^2,
 $$
 
 $$
