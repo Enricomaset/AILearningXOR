@@ -492,8 +492,7 @@ where $\eta>0$ is the learning rate.
 Writing all parameters together,
 
 $$
-\theta_{k+1}
-=
+\theta_{k+1}=
 \theta_k-\eta\nabla L(\theta_k).
 $$
 
@@ -550,8 +549,7 @@ At the output,
 $$
 \delta_3
 =
-\frac{\partial L}{\partial z_3}
-=
+\frac{\partial L}{\partial z_3}=
 (\hat y-y)\hat y(1-\hat y).
 $$
 
@@ -566,20 +564,17 @@ $$
 we obtain
 
 $$
-\frac{\partial L}{\partial v_1}
-=
+\frac{\partial L}{\partial v_1}=
 \delta_3h_1,
 $$
 
 $$
-\frac{\partial L}{\partial v_2}
-=
+\frac{\partial L}{\partial v_2}=
 \delta_3h_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_3}
-=
+\frac{\partial L}{\partial c_3}=
 \delta_3.
 $$
 
@@ -588,30 +583,25 @@ $$
 The output error reaches the first hidden neuron through the weight $v_1$:
 
 $$
-\delta_1
-=
-\frac{\partial L}{\partial z_1}
-=
+\delta_1=
+\frac{\partial L}{\partial z_1}=
 \delta_3v_1h_1(1-h_1).
 $$
 
 Therefore,
 
 $$
-\frac{\partial L}{\partial w_{11}}
-=
+\frac{\partial L}{\partial w_{11}}=
 \delta_1x_1,
 $$
 
 $$
-\frac{\partial L}{\partial w_{12}}
-=
+\frac{\partial L}{\partial w_{12}}=
 \delta_1x_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_1}
-=
+\frac{\partial L}{\partial c_1}=
 \delta_1.
 $$
 
@@ -620,30 +610,25 @@ $$
 Similarly,
 
 $$
-\delta_2
-=
-\frac{\partial L}{\partial z_2}
-=
+\delta_2=
+\frac{\partial L}{\partial z_2}=
 \delta_3v_2h_2(1-h_2),
 $$
 
 and
 
 $$
-\frac{\partial L}{\partial w_{21}}
-=
+\frac{\partial L}{\partial w_{21}}=
 \delta_2x_1,
 $$
 
 $$
-\frac{\partial L}{\partial w_{22}}
-=
+\frac{\partial L}{\partial w_{22}}=
 \delta_2x_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_2}
-=
+\frac{\partial L}{\partial c_2}=
 \delta_2.
 $$
 
@@ -676,8 +661,7 @@ $$
 Likewise,
 
 $$
-\frac{d\hat y}{dz_3}
-=
+\frac{d\hat y}{dz_3}=
 \hat y(1-\hat y).
 $$
 
@@ -768,8 +752,7 @@ The training points do not have separate weights.
 For example,
 
 $$
-\theta^{(1)}
-=
+\theta^{(1)}=
 \theta^{(0)}
 -\eta\nabla L_1,
 $$
@@ -777,8 +760,7 @@ $$
 and then
 
 $$
-\theta^{(2)}
-=
+\theta^{(2)}=
 \theta^{(1)}
 -\eta\nabla L_2.
 $$
@@ -915,8 +897,7 @@ $$
 For the complete dataset,
 
 $$
-L(\theta)
-=
+L(\theta)=
 \frac1N
 \sum_{i=1}^{N}
 (\hat y_i-y_i)^2.
@@ -925,8 +906,7 @@ $$
 ### Optimization
 
 $$
-\theta^\star
-=
+\theta^\star=
 \arg\min_\theta L(\theta).
 $$
 
