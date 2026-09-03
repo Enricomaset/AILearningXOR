@@ -547,8 +547,7 @@ $$
 At the output,
 
 $$
-\delta_3
-=
+\delta_3=
 \frac{\partial L}{\partial z_3}=
 (\hat y-y)\hat y(1-\hat y).
 $$
