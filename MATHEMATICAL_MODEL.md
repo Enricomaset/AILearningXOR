@@ -55,20 +55,17 @@ $$
 \hat y=\sigma(v_1h_1+v_2h_2+c_3).
 $$
 
-The complete vector of trainable parameters is
+The network has nine trainable parameters:
 
 $$
-\theta=
-(w_{11},w_{12},w_{21},w_{22},c_1,c_2,v_1,v_2,c_3).
+w_{11},\;w_{12},\;w_{21},\;w_{22},\;c_1,\;c_2,\;v_1,\;v_2,\;c_3.
 $$
-
-The network therefore has nine trainable parameters.
 
 ---
 
 ## 3. The geometric meaning of a hidden neuron
 
-Before applying the activation function, the first hidden neuron forms the linear combination
+Before applying the activation function, the first hidden neuron computes
 
 $$
 z_1=w_{11}x_1+w_{12}x_2+c_1.
@@ -88,7 +85,7 @@ $$
 
 defines a straight line in the $(x_1,x_2)$ plane.
 
-Similarly, the second hidden neuron defines
+Similarly, the second hidden neuron defines the line
 
 $$
 w_{21}x_1+w_{22}x_2+c_2=0.
@@ -98,7 +95,7 @@ $$
 
 The weights determine the orientation of each line, while the bias allows the line to move away from the origin.
 
-It is important to distinguish the lines from the neuron outputs. The lines are the sets of points for which the arguments of the sigmoids are zero. The quantities $h_1$ and $h_2$ are instead the values obtained **after** the activation function is applied.
+It is important to distinguish the lines from the neuron outputs. The lines are the sets of points for which the inputs of the sigmoids are zero. The quantities $h_1$ and $h_2$ are instead the values obtained **after** the activation function is applied.
 
 ---
 
@@ -184,12 +181,16 @@ $$
 h_2=\sigma(w_{21}x_1+w_{22}x_2+c_2).
 $$
 
-Thus, the hidden layer defines the transformation
+Thus, the hidden layer transforms
 
 $$
-\boxed{
-T:(x_1,x_2)\longmapsto(h_1,h_2)
-}.
+(x_1,x_2)
+$$
+
+into
+
+$$
+(h_1,h_2).
 $$
 
 In matrix form,
@@ -198,7 +199,8 @@ $$
 \begin{pmatrix}
 h_1\\
 h_2
-\end{pmatrix}=
+\end{pmatrix}
+=
 \sigma\left(
 \begin{pmatrix}
 w_{11} & w_{12}\\
@@ -220,17 +222,17 @@ where the sigmoid is applied component-wise.
 
 Each hidden neuron tells us approximately on which side of its threshold line the point lies.
 
-Therefore, the new coordinates
+Therefore, the pair
 
 $$
 (h_1,h_2)
 $$
 
-describe the position of the original point relative to the two learned lines.
+can be interpreted as a new pair of coordinates describing the position of the original point relative to the two learned lines.
 
-The important idea is that we are not physically moving the point inside the original plane. We are giving it a **new representation**.
+The important idea is that the network does not move the point inside the original plane. It gives the point a **new representation**.
 
-So the network performs the transformation
+So the hidden layer performs
 
 $$
 \boxed{
@@ -244,7 +246,7 @@ $$
 
 ## 6. Why the transformation is useful
 
-In the original $(x_1,x_2)$ plane, XOR cannot be separated by a single line:
+In the original $(x_1,x_2)$ plane, XOR cannot be separated by a single straight line:
 
 $$
 \boxed{
@@ -258,7 +260,7 @@ The hidden layer changes the representation of the four points.
 
 After the transformation, the same inputs become four points in the $(h_1,h_2)$ plane.
 
-The goal of training is to make these transformed points arranged so that one straight line can divide them into the two classes.
+Training adjusts the hidden weights and biases so that the transformed points can be divided into the two classes by one straight line.
 
 Thus,
 
@@ -270,7 +272,7 @@ $$
 }
 $$
 
-This is the central idea of the network:
+The central geometric idea is
 
 $$
 \boxed{
@@ -280,7 +282,16 @@ $$
 \end{array}
 }
 \quad
-\xrightarrow{\text{hidden transformation}}
+\longrightarrow
+\quad
+\boxed{
+\begin{array}{c}
+\text{hidden transformation}\\
+(x_1,x_2)\mapsto(h_1,h_2)
+\end{array}
+}
+\quad
+\longrightarrow
 \quad
 \boxed{
 \begin{array}{c}
@@ -334,9 +345,7 @@ Therefore,
 | $0.5<x_1+x_2<1.5$ | $(1,0)$ approximately | $1$ |
 | $x_1+x_2>1.5$ | $(1,1)$ approximately | $0$ |
 
-The hidden layer has therefore transformed the original geometry.
-
-The points belonging to class $1$ are moved near one region of the hidden plane, while the points belonging to class $0$ are moved elsewhere.
+The hidden layer has therefore changed the geometry of the data.
 
 ---
 
@@ -344,15 +353,13 @@ The points belonging to class $1$ are moved near one region of the hidden plane,
 
 <img src="xor_hidden_space.png" width="500" alt="XOR points in the hidden space">
 
-Once the points have been transformed into the $(h_1,h_2)$ plane, the output neuron only has to divide this new plane into two regions.
+Once the points have been transformed into the $(h_1,h_2)$ plane, the output neuron only has to divide this plane into two regions.
 
 It does this using the line
 
 $$
 v_1h_1+v_2h_2+c_3=0.
 $$
-
-This line divides the hidden plane into two half-planes.
 
 If
 
@@ -366,7 +373,7 @@ $$
 \hat y\approx1.
 $$
 
-If instead
+If
 
 $$
 v_1h_1+v_2h_2+c_3<0,
@@ -378,7 +385,7 @@ $$
 \hat y\approx0.
 $$
 
-So the output neuron behaves like a classifier based on which side of the line the transformed point lies.
+The output neuron therefore decides the class according to which side of the line the transformed point lies.
 
 For example, the line
 
@@ -392,28 +399,28 @@ The output neuron may then compute
 
 $$
 \hat y=
-\sigma\left(
-K(h_1-h_2-0.5)
-\right),
+\sigma\left(K(h_1-h_2-0.5)\right),
 $$
 
-with $K>0$ sufficiently large.
+where $K>0$ is sufficiently large.
 
 The complete geometric mechanism is therefore
 
 $$
 \boxed{
 (x_1,x_2)
-\xrightarrow{\text{nonlinear transformation}}
+\longrightarrow
 (h_1,h_2)
-\xrightarrow{\text{single separating line}}
+\longrightarrow
+\text{one separating line}
+\longrightarrow
 \hat y
 }.
 $$
 
-The hidden layer transforms the geometry.
+The hidden layer changes the representation.
 
-The output layer only decides on which side of a line the transformed point lies.
+The output layer checks on which side of a line the transformed point lies.
 
 ---
 
@@ -427,16 +434,29 @@ $$
 
 It does not receive $(x_1,x_2)$ directly.
 
-It sees only the transformed coordinates
+It receives only
 
 $$
 (h_1,h_2).
 $$
 
-The two groups of parameters therefore have different roles:
+The parameters therefore have different roles.
 
-- $(w_{ij},c_1,c_2)$ determine how the original input space is transformed;
-- $(v_1,v_2,c_3)$ determine the separating line in the hidden space.
+The parameters
+
+$$
+w_{11},w_{12},w_{21},w_{22},c_1,c_2
+$$
+
+determine how the original input plane is transformed.
+
+The parameters
+
+$$
+v_1,v_2,c_3
+$$
+
+determine the separating line in the hidden plane.
 
 All these parameters are learned together during training.
 
@@ -449,60 +469,137 @@ To train the network, we need a numerical measure of the difference between the 
 A simple choice is the **mean squared error**:
 
 $$
-L(\theta)=\frac{1}{N}\sum_{i=1}^{N}(\hat y_i-y_i)^2.
+L=
+\frac{1}{N}
+\sum_{i=1}^{N}
+(\hat y_i-y_i)^2.
 $$
 
 For XOR,
 
 $$
 \begin{aligned}
-L(\theta)=\frac14\big[&
-\hat y(0,0;\theta)^2
-+(\hat y(0,1;\theta)-1)^2\\
-&+(\hat y(1,0;\theta)-1)^2
-+\hat y(1,1;\theta)^2
+L=\frac14\big[&
+\hat y(0,0)^2
++(\hat y(0,1)-1)^2\\
+&+(\hat y(1,0)-1)^2
++\hat y(1,1)^2
 \big].
 \end{aligned}
 $$
 
-Training is therefore the optimization problem
+Training consists of finding values of
 
 $$
-\theta^\star=\arg\min_\theta L(\theta).
+w_{11},w_{12},w_{21},w_{22},
+c_1,c_2,v_1,v_2,c_3
 $$
+
+that make the loss as small as possible.
 
 The network is not explicitly told where to place the threshold lines.
 
-It receives only the input examples and their correct outputs.
+It receives only the input examples and the correct outputs.
 
-The geometry emerges from the adjustment of the parameters required to reduce the loss.
+The positions and orientations of the lines emerge from the adjustment of the weights and biases.
 
 ---
 
 ## 11. Gradient descent
 
-Gradient descent updates every parameter in the direction that reduces the loss:
+Gradient descent changes every parameter in the direction that reduces the loss.
+
+For example,
 
 $$
-p\leftarrow p-\eta\frac{\partial L}{\partial p},
+w_{11}
+\leftarrow
+w_{11}
+-\eta
+\frac{\partial L}{\partial w_{11}},
 $$
 
-where $\eta>0$ is the learning rate.
-
-Writing all parameters together,
-
 $$
-\theta_{k+1}=
-\theta_k-\eta\nabla L(\theta_k).
-$$
-
-Updates to the hidden-layer parameters change the transformation
-
-$$
-(x_1,x_2)\longmapsto(h_1,h_2),
+w_{12}
+\leftarrow
+w_{12}
+-\eta
+\frac{\partial L}{\partial w_{12}},
 $$
 
-while updates to the output parameters change the separating line in the hidden plane.
+$$
+w_{21}
+\leftarrow
+w_{21}
+-\eta
+\frac{\partial L}{\partial w_{21}},
+$$
+
+$$
+w_{22}
+\leftarrow
+w_{22}
+-\eta
+\frac{\partial L}{\partial w_{22}},
+$$
+
+$$
+c_1
+\leftarrow
+c_1
+-\eta
+\frac{\partial L}{\partial c_1},
+$$
+
+$$
+c_2
+\leftarrow
+c_2
+-\eta
+\frac{\partial L}{\partial c_2},
+$$
+
+$$
+v_1
+\leftarrow
+v_1
+-\eta
+\frac{\partial L}{\partial v_1},
+$$
+
+$$
+v_2
+\leftarrow
+v_2
+-\eta
+\frac{\partial L}{\partial v_2},
+$$
+
+$$
+c_3
+\leftarrow
+c_3
+-\eta
+\frac{\partial L}{\partial c_3}.
+$$
+
+The learning rate $\eta>0$ determines the size of each update.
+
+Updates to
+
+$$
+w_{11},w_{12},w_{21},w_{22},c_1,c_2
+$$
+
+change the transformation of the input space.
+
+Updates to
+
+$$
+v_1,v_2,c_3
+$$
+
+change the separating line in the hidden space.
 
 ---
 
@@ -514,10 +611,14 @@ $$
 L=\frac12(\hat y-y)^2.
 $$
 
-The pre-activation values are
+The network computes
 
 $$
 z_1=w_{11}x_1+w_{12}x_2+c_1,
+$$
+
+$$
+h_1=\sigma(z_1),
 $$
 
 $$
@@ -525,16 +626,14 @@ z_2=w_{21}x_1+w_{22}x_2+c_2,
 $$
 
 $$
-z_3=v_1h_1+v_2h_2+c_3.
-$$
-
-Then
-
-$$
-h_1=\sigma(z_1),
-\qquad
 h_2=\sigma(z_2),
-\qquad
+$$
+
+$$
+z_3=v_1h_1+v_2h_2+c_3,
+$$
+
+$$
 \hat y=\sigma(z_3).
 $$
 
@@ -544,11 +643,33 @@ $$
 \sigma'(a)=\sigma(a)(1-\sigma(a)).
 $$
 
-At the output,
+Since
 
 $$
-\delta_3=
-\frac{\partial L}{\partial z_3}=
+L=\frac12(\hat y-y)^2,
+$$
+
+we first obtain
+
+$$
+\frac{\partial L}{\partial \hat y}
+=
+\hat y-y.
+$$
+
+Also,
+
+$$
+\frac{\partial \hat y}{\partial z_3}
+=
+\hat y(1-\hat y).
+$$
+
+Therefore,
+
+$$
+\frac{\partial L}{\partial z_3}
+=
 (\hat y-y)\hat y(1-\hat y).
 $$
 
@@ -560,48 +681,123 @@ $$
 z_3=v_1h_1+v_2h_2+c_3,
 $$
 
-we obtain
+we have
 
 $$
-\frac{\partial L}{\partial v_1}=
-\delta_3h_1,
-$$
-
-$$
-\frac{\partial L}{\partial v_2}=
-\delta_3h_2,
+\frac{\partial z_3}{\partial v_1}=h_1,
 $$
 
 $$
-\frac{\partial L}{\partial c_3}=
-\delta_3.
+\frac{\partial z_3}{\partial v_2}=h_2,
+$$
+
+$$
+\frac{\partial z_3}{\partial c_3}=1.
+$$
+
+Hence,
+
+$$
+\boxed{
+\frac{\partial L}{\partial v_1}
+=
+(\hat y-y)\hat y(1-\hat y)h_1
+}
+$$
+
+$$
+\boxed{
+\frac{\partial L}{\partial v_2}
+=
+(\hat y-y)\hat y(1-\hat y)h_2
+}
+$$
+
+$$
+\boxed{
+\frac{\partial L}{\partial c_3}
+=
+(\hat y-y)\hat y(1-\hat y)
+}
 $$
 
 ### First hidden neuron
 
-The output error reaches the first hidden neuron through the weight $v_1$:
+Because
 
 $$
-\delta_1=
-\frac{\partial L}{\partial z_1}=
-\delta_3v_1h_1(1-h_1).
+z_3=v_1h_1+v_2h_2+c_3,
+$$
+
+we have
+
+$$
+\frac{\partial z_3}{\partial h_1}=v_1.
+$$
+
+Since
+
+$$
+h_1=\sigma(z_1),
+$$
+
+we have
+
+$$
+\frac{\partial h_1}{\partial z_1}
+=
+h_1(1-h_1).
+$$
+
+Also,
+
+$$
+\frac{\partial z_1}{\partial w_{11}}=x_1,
+$$
+
+$$
+\frac{\partial z_1}{\partial w_{12}}=x_2,
+$$
+
+$$
+\frac{\partial z_1}{\partial c_1}=1.
 $$
 
 Therefore,
 
 $$
-\frac{\partial L}{\partial w_{11}}=
-\delta_1x_1,
+\boxed{
+\frac{\partial L}{\partial w_{11}}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_1
+h_1(1-h_1)
+x_1
+}
 $$
 
 $$
-\frac{\partial L}{\partial w_{12}}=
-\delta_1x_2,
+\boxed{
+\frac{\partial L}{\partial w_{12}}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_1
+h_1(1-h_1)
+x_2
+}
 $$
 
 $$
-\frac{\partial L}{\partial c_1}=
-\delta_1.
+\boxed{
+\frac{\partial L}{\partial c_1}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_1
+h_1(1-h_1)
+}
 $$
 
 ### Second hidden neuron
@@ -609,96 +805,253 @@ $$
 Similarly,
 
 $$
-\delta_2=
-\frac{\partial L}{\partial z_2}=
-\delta_3v_2h_2(1-h_2),
+\frac{\partial z_3}{\partial h_2}=v_2,
 $$
 
 and
 
 $$
-\frac{\partial L}{\partial w_{21}}=
-\delta_2x_1,
+\frac{\partial h_2}{\partial z_2}
+=
+h_2(1-h_2).
+$$
+
+Since
+
+$$
+\frac{\partial z_2}{\partial w_{21}}=x_1,
 $$
 
 $$
-\frac{\partial L}{\partial w_{22}}=
-\delta_2x_2,
+\frac{\partial z_2}{\partial w_{22}}=x_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_2}=
-\delta_2.
+\frac{\partial z_2}{\partial c_2}=1,
 $$
 
-Backpropagation is therefore an organized application of the chain rule.
+we obtain
 
-It starts from the final error and propagates its influence backward through the network.
+$$
+\boxed{
+\frac{\partial L}{\partial w_{21}}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+x_1
+}
+$$
+
+$$
+\boxed{
+\frac{\partial L}{\partial w_{22}}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+x_2
+}
+$$
+
+$$
+\boxed{
+\frac{\partial L}{\partial c_2}
+=
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+}
+$$
+
+Backpropagation is therefore simply the repeated application of the chain rule from the output of the network back toward the input.
 
 ---
 
 ## 13. Why do the factors $h(1-h)$ and $\hat y(1-\hat y)$ appear?
 
-They come from the derivative of the sigmoid:
+They come directly from the derivative of the sigmoid:
 
 $$
-\sigma'(a)=\sigma(a)(1-\sigma(a)).
+\sigma'(a)
+=
+\sigma(a)(1-\sigma(a)).
 $$
 
-For a hidden neuron,
+Since
 
 $$
-h=\sigma(z),
+h_1=\sigma(z_1),
 $$
 
-so
+we have
 
 $$
-\frac{dh}{dz}=h(1-h).
+\frac{\partial h_1}{\partial z_1}
+=
+h_1(1-h_1).
 $$
 
-Likewise,
+Similarly,
 
 $$
-\frac{d\hat y}{dz_3}=
+\frac{\partial h_2}{\partial z_2}
+=
+h_2(1-h_2),
+$$
+
+and
+
+$$
+\frac{\partial \hat y}{\partial z_3}
+=
 \hat y(1-\hat y).
 $$
 
-These factors measure how sensitive the neuron output is to changes in its input.
+These factors measure how strongly the output of a sigmoid changes when its input changes.
 
 ---
 
-## 14. Example of a complete parameter update
+## 14. Complete parameter updates
 
-The update of $w_{11}$ is
+Substituting the derivatives directly into gradient descent gives all the updates explicitly.
+
+For the output layer,
 
 $$
+\boxed{
+v_1
+\leftarrow
+v_1
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+h_1
+}
+$$
+
+$$
+\boxed{
+v_2
+\leftarrow
+v_2
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+h_2
+}
+$$
+
+$$
+\boxed{
+c_3
+\leftarrow
+c_3
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+}
+$$
+
+For the first hidden neuron,
+
+$$
+\boxed{
 w_{11}
 \leftarrow
 w_{11}
--\eta
+-
+\eta
 (\hat y-y)
 \hat y(1-\hat y)
 v_1
 h_1(1-h_1)
-x_1.
+x_1
+}
 $$
 
-This expression follows the chain of dependencies
-
 $$
-\text{error}
-\longrightarrow
-\text{output neuron}
-\longrightarrow
+\boxed{
+w_{12}
+\leftarrow
+w_{12}
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
 v_1
-\longrightarrow
-\text{hidden neuron}
-\longrightarrow
-x_1.
+h_1(1-h_1)
+x_2
+}
 $$
 
-Backpropagation follows this chain in reverse order to compute the effect of each parameter on the loss.
+$$
+\boxed{
+c_1
+\leftarrow
+c_1
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+v_1
+h_1(1-h_1)
+}
+$$
+
+For the second hidden neuron,
+
+$$
+\boxed{
+w_{21}
+\leftarrow
+w_{21}
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+x_1
+}
+$$
+
+$$
+\boxed{
+w_{22}
+\leftarrow
+w_{22}
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+x_2
+}
+$$
+
+$$
+\boxed{
+c_2
+\leftarrow
+c_2
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+v_2
+h_2(1-h_2)
+}
+$$
+
+These formulas show explicitly how the prediction error changes every weight and bias in the network.
 
 ---
 
@@ -711,20 +1064,20 @@ Training and inference use the same forward computation, but only training modif
 For each example, the network:
 
 1. receives $(x_1,x_2)$;
-2. computes $(h_1,h_2)$;
+2. computes $h_1$ and $h_2$;
 3. computes $\hat y$;
 4. compares $\hat y$ with $y$;
-5. evaluates the loss;
-6. computes the gradients;
-7. updates the parameters.
+5. computes the loss;
+6. computes all derivatives;
+7. updates all weights and biases.
 
 These operations are repeated many times.
 
 ### Inference
 
-After training, the parameters remain fixed.
+After training, the weights and biases remain fixed.
 
-The network simply evaluates
+For a new input, the network only computes
 
 $$
 (x_1,x_2)
@@ -734,39 +1087,39 @@ $$
 \hat y.
 $$
 
-No loss or backpropagation is required.
+No loss, derivatives, or parameter updates are required.
 
 ---
 
-## 16. The parameters are shared by all examples
+## 16. The same parameters are used for every example
 
-The network has one global parameter vector
+The four XOR examples do not have separate weights.
 
-$$
-\theta.
-$$
-
-The training points do not have separate weights.
-
-For example,
+The same values
 
 $$
-\theta^{(1)}=
-\theta^{(0)}
--\eta\nabla L_1,
+w_{11},w_{12},w_{21},w_{22},
+c_1,c_2,v_1,v_2,c_3
 $$
 
-and then
+are used for all four points.
+
+For example, after processing one point, the network may update
 
 $$
-\theta^{(2)}=
-\theta^{(1)}
--\eta\nabla L_2.
+w_{11}
+\leftarrow
+w_{11}
+-
+\eta
+\frac{\partial L}{\partial w_{11}}.
 $$
 
-Every example modifies the same network.
+The next training point then uses this new value of $w_{11}$.
 
-Therefore, the learned parameters must work for the entire dataset.
+Therefore, all training examples progressively modify the same network.
+
+The final weights and biases must produce good predictions for the dataset as a whole.
 
 ---
 
@@ -776,21 +1129,13 @@ For XOR, the hidden layer learns a transformation
 
 $$
 (x_1,x_2)
-\longmapsto
+\longrightarrow
 (h_1,h_2)
 $$
 
-that reorganizes the four input points.
+that reorganizes the four points.
 
-In the original plane,
-
-$$
-\text{class }0
-\quad\text{and}\quad
-\text{class }1
-$$
-
-cannot be separated by one line.
+In the original plane, the two classes cannot be separated by one line.
 
 After the transformation, they can.
 
@@ -810,7 +1155,7 @@ This is the key reason why adding a nonlinear hidden layer allows the network to
 
 The hidden neurons do not directly produce the final classification.
 
-They construct new coordinates:
+They create new coordinates:
 
 $$
 \boxed{
@@ -822,15 +1167,17 @@ $$
 
 These coordinates reorganize the geometry of the data.
 
-The output neuron can then draw one linear boundary in the new space:
+The output neuron then uses one line
 
 $$
 \boxed{
 v_1h_1+v_2h_2+c_3=0
-}.
+}
 $$
 
-A transformed point on one side of the line belongs to one class, while a point on the other side belongs to the other.
+to divide the hidden plane into two regions.
+
+A transformed point on one side of the line corresponds to one class, while a transformed point on the other side corresponds to the other.
 
 Thus,
 
@@ -868,21 +1215,21 @@ $$
 ### Forward propagation
 
 $$
-z_1=w_{11}x_1+w_{12}x_2+c_1,
-\qquad
-h_1=\sigma(z_1),
+h_1
+=
+\sigma(w_{11}x_1+w_{12}x_2+c_1),
 $$
 
 $$
-z_2=w_{21}x_1+w_{22}x_2+c_2,
-\qquad
-h_2=\sigma(z_2),
+h_2
+=
+\sigma(w_{21}x_1+w_{22}x_2+c_2),
 $$
 
 $$
-z_3=v_1h_1+v_2h_2+c_3,
-\qquad
-\hat y=\sigma(z_3).
+\hat y
+=
+\sigma(v_1h_1+v_2h_2+c_3).
 $$
 
 ### Loss
@@ -896,38 +1243,94 @@ $$
 For the complete dataset,
 
 $$
-L(\theta)=
+L=
 \frac1N
 \sum_{i=1}^{N}
 (\hat y_i-y_i)^2.
 $$
 
-### Optimization
+### Output-layer derivatives
 
 $$
-\theta^\star=
-\arg\min_\theta L(\theta).
+\frac{\partial L}{\partial v_1}
+=
+(\hat y-y)\hat y(1-\hat y)h_1,
 $$
 
-### Backpropagation
-
-Compute
-
 $$
-\frac{\partial L}{\partial p}
+\frac{\partial L}{\partial v_2}
+=
+(\hat y-y)\hat y(1-\hat y)h_2,
 $$
 
-for every parameter $p$ using the chain rule.
+$$
+\frac{\partial L}{\partial c_3}
+=
+(\hat y-y)\hat y(1-\hat y).
+$$
 
-### Gradient descent
+### Hidden-layer derivatives
 
 $$
-p
+\frac{\partial L}{\partial w_{11}}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_1h_1(1-h_1)x_1,
+$$
+
+$$
+\frac{\partial L}{\partial w_{12}}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_1h_1(1-h_1)x_2,
+$$
+
+$$
+\frac{\partial L}{\partial c_1}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_1h_1(1-h_1),
+$$
+
+$$
+\frac{\partial L}{\partial w_{21}}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_2h_2(1-h_2)x_1,
+$$
+
+$$
+\frac{\partial L}{\partial w_{22}}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_2h_2(1-h_2)x_2,
+$$
+
+$$
+\frac{\partial L}{\partial c_2}
+=
+(\hat y-y)\hat y(1-\hat y)
+v_2h_2(1-h_2).
+$$
+
+### Gradient-descent updates
+
+Every parameter is updated by subtracting its derivative multiplied by the learning rate $\eta$.
+
+For example,
+
+$$
+w_{11}
 \leftarrow
-p-\eta\frac{\partial L}{\partial p}.
+w_{11}
+-
+\eta
+(\hat y-y)
+\hat y(1-\hat y)
+v_1h_1(1-h_1)x_1.
 $$
 
-Repeating this procedure modifies both the transformation produced by the hidden layer and the separating line produced by the output layer.
+Repeating these updates changes both the transformation produced by the hidden layer and the separating line produced by the output layer.
 
 ---
 
