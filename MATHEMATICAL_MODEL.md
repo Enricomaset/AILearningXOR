@@ -652,24 +652,21 @@ $$
 we first obtain
 
 $$
-\frac{\partial L}{\partial \hat y}
-=
+\frac{\partial L}{\partial \hat y}=
 \hat y-y.
 $$
 
 Also,
 
 $$
-\frac{\partial \hat y}{\partial z_3}
-=
+\frac{\partial \hat y}{\partial z_3}=
 \hat y(1-\hat y).
 $$
 
 Therefore,
 
 $$
-\frac{\partial L}{\partial z_3}
-=
+\frac{\partial L}{\partial z_3}=
 (\hat y-y)\hat y(1-\hat y).
 $$
 
@@ -699,24 +696,21 @@ Hence,
 
 $$
 \boxed{
-\frac{\partial L}{\partial v_1}
-=
+\frac{\partial L}{\partial v_1}=
 (\hat y-y)\hat y(1-\hat y)h_1
 }
 $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial v_2}
-=
+\frac{\partial L}{\partial v_2}=
 (\hat y-y)\hat y(1-\hat y)h_2
 }
 $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial c_3}
-=
+\frac{\partial L}{\partial c_3}=
 (\hat y-y)\hat y(1-\hat y)
 }
 $$
@@ -744,8 +738,7 @@ $$
 we have
 
 $$
-\frac{\partial h_1}{\partial z_1}
-=
+\frac{\partial h_1}{\partial z_1}=
 h_1(1-h_1).
 $$
 
@@ -767,8 +760,7 @@ Therefore,
 
 $$
 \boxed{
-\frac{\partial L}{\partial w_{11}}
-=
+\frac{\partial L}{\partial w_{11}}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_1
@@ -779,8 +771,7 @@ $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial w_{12}}
-=
+\frac{\partial L}{\partial w_{12}}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_1
@@ -791,8 +782,7 @@ $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial c_1}
-=
+\frac{\partial L}{\partial c_1}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_1
@@ -811,8 +801,7 @@ $$
 and
 
 $$
-\frac{\partial h_2}{\partial z_2}
-=
+\frac{\partial h_2}{\partial z_2}=
 h_2(1-h_2).
 $$
 
@@ -834,8 +823,7 @@ we obtain
 
 $$
 \boxed{
-\frac{\partial L}{\partial w_{21}}
-=
+\frac{\partial L}{\partial w_{21}}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_2
@@ -846,8 +834,7 @@ $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial w_{22}}
-=
+\frac{\partial L}{\partial w_{22}}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_2
@@ -858,8 +845,7 @@ $$
 
 $$
 \boxed{
-\frac{\partial L}{\partial c_2}
-=
+\frac{\partial L}{\partial c_2}=
 (\hat y-y)
 \hat y(1-\hat y)
 v_2
@@ -876,8 +862,7 @@ Backpropagation is therefore simply the repeated application of the chain rule f
 They come directly from the derivative of the sigmoid:
 
 $$
-\sigma'(a)
-=
+\sigma'(a)=
 \sigma(a)(1-\sigma(a)).
 $$
 
@@ -890,24 +875,21 @@ $$
 we have
 
 $$
-\frac{\partial h_1}{\partial z_1}
-=
+\frac{\partial h_1}{\partial z_1}=
 h_1(1-h_1).
 $$
 
 Similarly,
 
 $$
-\frac{\partial h_2}{\partial z_2}
-=
+\frac{\partial h_2}{\partial z_2}=
 h_2(1-h_2),
 $$
 
 and
 
 $$
-\frac{\partial \hat y}{\partial z_3}
-=
+\frac{\partial \hat y}{\partial z_3}=
 \hat y(1-\hat y).
 $$
 
@@ -925,8 +907,7 @@ $$
 \boxed{
 v_1
 \leftarrow
-v_1
--
+v_1-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -938,8 +919,7 @@ $$
 \boxed{
 v_2
 \leftarrow
-v_2
--
+v_2-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -951,8 +931,7 @@ $$
 \boxed{
 c_3
 \leftarrow
-c_3
--
+c_3-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -965,8 +944,7 @@ $$
 \boxed{
 w_{11}
 \leftarrow
-w_{11}
--
+w_{11}-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -980,8 +958,7 @@ $$
 \boxed{
 w_{12}
 \leftarrow
-w_{12}
--
+w_{12}-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -995,8 +972,7 @@ $$
 \boxed{
 c_1
 \leftarrow
-c_1
--
+c_1-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -1011,8 +987,7 @@ $$
 \boxed{
 w_{21}
 \leftarrow
-w_{21}
--
+w_{21}-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -1026,8 +1001,7 @@ $$
 \boxed{
 w_{22}
 \leftarrow
-w_{22}
--
+w_{22}-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -1041,8 +1015,7 @@ $$
 \boxed{
 c_2
 \leftarrow
-c_2
--
+c_2-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
@@ -1109,8 +1082,7 @@ For example, after processing one point, the network may update
 $$
 w_{11}
 \leftarrow
-w_{11}
--
+w_{11}-
 \eta
 \frac{\partial L}{\partial w_{11}}.
 $$
@@ -1252,28 +1224,24 @@ $$
 ### Output-layer derivatives
 
 $$
-\frac{\partial L}{\partial v_1}
-=
+\frac{\partial L}{\partial v_1}=
 (\hat y-y)\hat y(1-\hat y)h_1,
 $$
 
 $$
-\frac{\partial L}{\partial v_2}
-=
+\frac{\partial L}{\partial v_2}=
 (\hat y-y)\hat y(1-\hat y)h_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_3}
-=
+\frac{\partial L}{\partial c_3}=
 (\hat y-y)\hat y(1-\hat y).
 $$
 
 ### Hidden-layer derivatives
 
 $$
-\frac{\partial L}{\partial w_{11}}
-=
+\frac{\partial L}{\partial w_{11}}=
 (\hat y-y)\hat y(1-\hat y)
 v_1h_1(1-h_1)x_1,
 $$
@@ -1286,29 +1254,25 @@ v_1h_1(1-h_1)x_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_1}
-=
+\frac{\partial L}{\partial c_1}=
 (\hat y-y)\hat y(1-\hat y)
 v_1h_1(1-h_1),
 $$
 
 $$
-\frac{\partial L}{\partial w_{21}}
-=
+\frac{\partial L}{\partial w_{21}}=
 (\hat y-y)\hat y(1-\hat y)
 v_2h_2(1-h_2)x_1,
 $$
 
 $$
-\frac{\partial L}{\partial w_{22}}
-=
+\frac{\partial L}{\partial w_{22}}=
 (\hat y-y)\hat y(1-\hat y)
 v_2h_2(1-h_2)x_2,
 $$
 
 $$
-\frac{\partial L}{\partial c_2}
-=
+\frac{\partial L}{\partial c_2}=
 (\hat y-y)\hat y(1-\hat y)
 v_2h_2(1-h_2).
 $$
@@ -1322,8 +1286,7 @@ For example,
 $$
 w_{11}
 \leftarrow
-w_{11}
--
+w_{11}-
 \eta
 (\hat y-y)
 \hat y(1-\hat y)
