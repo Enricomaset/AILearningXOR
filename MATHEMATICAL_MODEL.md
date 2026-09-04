@@ -1290,9 +1290,3 @@ v_1h_1(1-h_1)x_1.
 $$
 
 Repeating these updates changes both the transformation produced by the hidden layer and the separating line produced by the output layer.
-
----
-
-## 20. The whole idea in one sentence
-
-> A neural network solves XOR by transforming the original coordinates $(x_1,x_2)$ into new coordinates $(h_1,h_2)$ in which the two classes lie on opposite sides of a single straight line.
