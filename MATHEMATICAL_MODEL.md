@@ -1187,20 +1187,17 @@ $$
 ### Forward propagation
 
 $$
-h_1
-=
+h_1=
 \sigma(w_{11}x_1+w_{12}x_2+c_1),
 $$
 
 $$
-h_2
-=
+h_2)=
 \sigma(w_{21}x_1+w_{22}x_2+c_2),
 $$
 
 $$
-\hat y
-=
+\hat y=
 \sigma(v_1h_1+v_2h_2+c_3).
 $$
 
@@ -1247,8 +1244,7 @@ v_1h_1(1-h_1)x_1,
 $$
 
 $$
-\frac{\partial L}{\partial w_{12}}
-=
+\frac{\partial L}{\partial w_{12}}=
 (\hat y-y)\hat y(1-\hat y)
 v_1h_1(1-h_1)x_2,
 $$
