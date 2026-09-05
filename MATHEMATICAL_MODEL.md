@@ -199,8 +199,7 @@ $$
 \begin{pmatrix}
 h_1\\
 h_2
-\end{pmatrix}
-=
+\end{pmatrix}=
 \sigma\left(
 \begin{pmatrix}
 w_{11} & w_{12}\\
